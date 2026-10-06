@@ -101,7 +101,7 @@ public:
         if (memory.State != MEM_COMMIT || memory.Type != MEM_IMAGE ||
             !executable(memory.Protect) || address > region_end ||
             original_.size() > region_end - address)
-            fail("Executable entrypoint is not in a writable image range");
+            fail("Executable entrypoint is not in an executable image range");
         SIZE_T count{};
         if (!ReadProcessMemory(process_, address_, original_.data(), original_.size(), &count) ||
             count != original_.size())
@@ -490,9 +490,10 @@ std::uintptr_t validated_remote_load_library(HANDLE process, std::string* note) 
     IMAGE_DOS_HEADER remote_dos{};
     SIZE_T read{};
     if (!ReadProcessMemory(process, reinterpret_cast<const void*>(remote_base), &remote_dos,
-            sizeof(remote_dos), &read) || read != sizeof(remote_dos) ||
-        remote_dos.e_magic != dos.e_magic || remote_dos.e_lfanew != dos.e_lfanew)
+            sizeof(remote_dos), &read) || read != sizeof(remote_dos))
         fail_windows("Cannot validate the child LoadLibraryW provider header");
+    if (remote_dos.e_magic != dos.e_magic || remote_dos.e_lfanew != dos.e_lfanew)
+        fail("The child LoadLibraryW provider header does not match this process");
     IMAGE_NT_HEADERS64 remote_nt{};
     if (!ReadProcessMemory(process,
             reinterpret_cast<const void*>(remote_base + static_cast<std::uintptr_t>(remote_dos.e_lfanew)),
