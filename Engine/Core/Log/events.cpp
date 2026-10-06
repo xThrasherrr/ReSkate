@@ -26,7 +26,7 @@ void event(Context context, Channel channel, std::string_view json, Level level)
             ? std::string_view(event->value.GetString(), event->value.GetStringLength()) : "observation";
         // Legacy native observers use structured events. Preserve their severity
         // during migration, including errors produced through generic callbacks.
-        if (id.ends_with("_failed") || id == "bootstrap_failed") level = std::max(level, Level::error);
+        if (id.ends_with("_failed")) level = std::max(level, Level::error);
         else if (id.ends_with("_rejected") || id.ends_with("_mismatch")) level = std::max(level, Level::warning);
         const std::pair<std::string_view, std::string_view> activities[]{
             {"local_profile_initialized", "Local profile services initialized"},
