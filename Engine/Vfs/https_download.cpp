@@ -81,7 +81,7 @@ std::optional<std::string> get_text(std::wstring_view url, std::uint64_t max_byt
     static std::atomic<unsigned> serial{};
     wchar_t folder[MAX_PATH + 1]{};
     const auto length = GetTempPathW(MAX_PATH, folder);
-    const auto path = std::filesystem::path(length ? std::wstring(folder, length) : L".") /
+    const auto path = std::filesystem::path(length && length <= MAX_PATH ? std::wstring(folder, length) : L".") /
         (L"reskate-get-" + std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(++serial) + L".tmp");
     std::error_code error;
     std::filesystem::remove(path, error); // get needs a fresh destination

@@ -110,7 +110,7 @@ namespace {
 std::filesystem::path temporary_file(std::wstring_view name) {
     wchar_t folder[MAX_PATH + 1]{};
     const auto length = GetTempPathW(MAX_PATH, folder);
-    auto path = std::filesystem::path(length ? std::wstring(folder, length) : L".") /
+    auto path = std::filesystem::path(length && length <= MAX_PATH ? std::wstring(folder, length) : L".") /
                 (L"reskate-" + std::wstring(name) + L"-" + std::to_wstring(GetCurrentProcessId()) + L".json");
     std::error_code error;
     std::filesystem::remove(path, error); // https::get needs a fresh destination
