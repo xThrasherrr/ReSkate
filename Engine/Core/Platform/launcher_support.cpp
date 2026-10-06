@@ -215,6 +215,8 @@ LaunchOptions parse_launch_options(const std::vector<std::wstring>& arguments) {
         options.game_arguments.emplace_back(argument);
     }
     if (options.log_trace && !log_level_explicit) options.log_level = "trace";
+    if (options.menu_key == options.console_key)
+        fail("The menu and console need different keys. Change one in Settings.");
     return options;
 }
 
