@@ -16,10 +16,17 @@ void check(bool condition, const char* message) {
 
 int main(int argc, char** argv) {
     using namespace dingosdk;
+    {
+        content_cache::Catalogs many;
+        many.travel_locations.push_back({"location_bam", "defaultDsub", "San Van"});
+        for (int index = 0; index < 20; ++index)
+            many.travel_access_points.emplace_back("accesspoint_" + std::to_string(index), std::vector<std::string>{"location_bam"});
+        check(location_travel_policy(Json::object(), many).access_points.size() == 16, "access points capped at 16");
+    }
     const std::filesystem::path folder = argc > 1 ? std::filesystem::path(argv[1]) : content_cache::directory();
     if (!std::filesystem::exists(folder)) {
         std::cout << "No content cache at " << folder.string() << "; skipped.\n";
-        return 0;
+        return failures ? 1 : 0;
     }
     const auto catalogs = content_cache::read_catalogs(folder);
     check(catalogs.available, "catalogues read");

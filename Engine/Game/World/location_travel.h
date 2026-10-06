@@ -81,7 +81,7 @@ inline LocationTravelPolicy location_travel_policy(const dingosdk::Json& extensi
         for (const auto& target : targets)
             if (result.destinations.contains(target) && std::find(kept.begin(), kept.end(), target) == kept.end())
                 kept.push_back(target);
-        if (!kept.empty()) result.access_points.emplace(id, std::move(kept));
+        if (!kept.empty() && result.access_points.size() < 16) result.access_points.emplace(id, std::move(kept)); // The game's list holds 16, like destinations.
     }
     return result;
 }
