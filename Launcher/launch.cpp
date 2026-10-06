@@ -507,7 +507,7 @@ bool steam_signed_in() {
     Handle process(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, *pid));
     DWORD code{};
     if (!process.get() || !GetExitCodeProcess(process.get(), &code) || code != STILL_ACTIVE) return false;
-    std::wstring image(MAX_PATH, L'\0');
+    std::wstring image(32768, L'\0');
     DWORD length = static_cast<DWORD>(image.size());
     if (!QueryFullProcessImageNameW(process.get(), 0, image.data(), &length)) return false;
     image.resize(length);
